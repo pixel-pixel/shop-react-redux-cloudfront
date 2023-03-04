@@ -12,7 +12,6 @@ plugins:
   - serverless-finch
   - serverless-single-page-app-plugin
 
-
 custom:
   client:
     bucketName: my-second-mkl-app
