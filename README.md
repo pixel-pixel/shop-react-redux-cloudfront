@@ -69,3 +69,7 @@ Combination of `cloudfront:setup` and `cloudfront:build:deploy` commands with or
 ### `serverless:remove`
 
 Remove an entire stack configured in `serverless.yml` via CloudFormation.
+
+### Task 2 (Serve SPA in AWS S3 and Cloudfront Services)
+ - [CloudFront-website URL](https://d3c0jyxafezkgf.cloudfront.net/)
+ - [S3-website URL (403, not able to view cause I use cloudFront)](http://shop-react-redux-cloudfr-serverlessdeploymentbuck-fea4njn1wrlt.s3-website-us-east-1.amazonaws.com/)

@@ -1,5 +1,5 @@
 {
-  "name": "my-store-app",
+  "name": "shop-react-redux-cloudfront",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -22,7 +22,8 @@
     "cloudfront:build:deploy:nc": "npm run client:build:deploy:nc && npm run cloudfront:invalidateCache",
     "cloudfront:update:build:deploy": "npm run cloudfront:setup && npm run cloudfront:build:deploy",
     "cloudfront:update:build:deploy:nc": "npm run cloudfront:setup && npm run cloudfront:build:deploy:nc",
-    "serverless:remove": "sls remove"
+    "serverless:remove": "sls remove",
+    "deploy:s3": "serverless client deploy --no-config-change --no-policy-change --no-cors-change"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",
@@ -37,7 +38,8 @@
     "react-dom": "^18.2.0",
     "react-query": "^3.39.1",
     "react-router-dom": "^6.3.0",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "serverless-single-page-app-plugin": "file:./serverless-single-page-app-plugin"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
