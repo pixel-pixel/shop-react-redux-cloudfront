@@ -6,17 +6,19 @@ provider:
   runtime: nodejs16.x
   stage: dev
   region: eu-west-1
+  httpApi:
+    cors: true
 
 functions:
   getProductList:
     handler: src/handlers/getProductList.getProductList
     events:
-      - http:
+      - httpApi:
           path: /products
           method: get
   getProductById:
     handler: src/handlers/getProductById.getProductById
     events:
-      - http:
+      - httpApi:
           path: /products/{productId}
           method: get
