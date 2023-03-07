@@ -1,0 +1,22 @@
+service: product-lambda
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: eu-west-1
+
+functions:
+  getProductList:
+    handler: src/handlers/getProductList.getProductList
+    events:
+      - http:
+          path: /products
+          method: get
+  getProductById:
+    handler: src/handlers/getProductById.getProductById
+    events:
+      - http:
+          path: /products/{productId}
+          method: get
