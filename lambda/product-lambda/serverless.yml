@@ -1,0 +1,24 @@
+service: product-lambda
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: eu-west-1
+  httpApi:
+    cors: true
+
+functions:
+  getProductList:
+    handler: src/handlers/getProductList.getProductList
+    events:
+      - httpApi:
+          path: /products
+          method: get
+  getProductById:
+    handler: src/handlers/getProductById.getProductById
+    events:
+      - httpApi:
+          path: /products/{productId}
+          method: get
