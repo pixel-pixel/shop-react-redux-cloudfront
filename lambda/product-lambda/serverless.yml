@@ -9,6 +9,26 @@ provider:
   httpApi:
     cors: true
 
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:eu-west-1:262737713977:table/products"
+            - "arn:aws:dynamodb:eu-west-1:262737713977:table/stocks"
+
+  environment:
+    TABLE_PRODUCTS: products
+    TABLE_STOCKS: stocks
+
 functions:
   getProductList:
     handler: src/handlers/getProductList.getProductList
@@ -20,5 +40,34 @@ functions:
     handler: src/handlers/getProductById.getProductById
     events:
       - httpApi:
-          path: /products/{productId}
+          path: /product/{productId}
           method: get
+
+resources:
+ Resources:
+  productsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: products
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  stocksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: stocks
+      AttributeDefinitions:
+        - AttributeName: product_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: product_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
