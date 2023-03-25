@@ -1,11 +1,38 @@
-import { productsMock } from '../mocks/products.js'
+import AWS from 'aws-sdk'
+import { getStockForProduct } from '../utils/getStockForProduct.js'
+
+const db = new AWS.DynamoDB()
+const productTable = process.env.TABLE_PRODUCTS
 
 export const getProductList = async (event) => {
-  //Emulate async operation
-  const products = await Promise.resolve(productsMock)
+  console.log({ event })
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(products)
+  try {
+    const products = await db.scan({
+      TableName: productTable
+    }).promise()
+
+    const items = products.Items
+
+    const joinedItems = await Promise.all(
+      items.map(async (i) => {
+        return {
+          ...AWS.DynamoDB.Converter.unmarshall(i),
+          count: await getStockForProduct(i.id.S)
+        }
+      })
+    )
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(joinedItems)
+    }
+
+  } catch (error) {
+    const message = error.message || 'Something went wrong !!!'
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message })
+    }
   }
 }
