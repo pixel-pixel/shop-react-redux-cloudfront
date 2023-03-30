@@ -20,6 +20,17 @@ provider:
           Resource:
             - "arn:aws:s3:::uploaded-bucket-gwjf/*"
 
+resources:
+  Resources:
+    AuthorizerApiGatewayResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Headers": "'*'"
+        ResponseType: "DEFAULT_4XX"
+        RestApiId: "dbmwkl2fzl"
+
 functions:
   importProductsFile:
     handler: src/handlers/importProductsFile.importProductsFile
@@ -33,6 +44,9 @@ functions:
                 name: true
           cors:
             origin: '*'
+          authorizer:
+            arn: arn:aws:lambda:eu-west-1:645756223154:function:authorization-service-dev-authorizer
+            name: authorization-service-dev-authorizer
 
   importFileParser:
     handler: src/handlers/importFileParser.importFileParser
