@@ -29,6 +29,49 @@ provider:
     TABLE_PRODUCTS: products
     TABLE_STOCKS: stocks
 
+resources:
+  Resources:
+    catalogBatchProcessQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "catalogBatchProcessQueue"
+    createProductTopic:
+        Type: AWS::SNS::Topic
+        Properties:
+          TopicName: "createProductTopic"
+    createProductSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+          Endpoint: Andrii_Bartish@epam.com
+          Protocol: email
+          TopicArn: {"Ref": "createProductTopic"}
+    productsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: products
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    stocksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: stocks
+        AttributeDefinitions:
+          - AttributeName: product_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: product_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
 functions:
   getProductList:
     handler: src/handlers/getProductList.getProductList
@@ -42,32 +85,13 @@ functions:
       - httpApi:
           path: /product/{productId}
           method: get
+  catalogBatchProcess:
+    handler: rc/handlers/catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: 
+              - catalogBatchProcessQueue
+              - Arn
+          batchSize: 5
 
-resources:
- Resources:
-  productsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: products
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-  stocksTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: stocks
-      AttributeDefinitions:
-        - AttributeName: product_id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: product_id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
