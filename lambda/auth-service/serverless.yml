@@ -1,0 +1,16 @@
+service: auth-service
+frameworkVersion: '3'
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: eu-west-1
+
+functions:
+  authorizer:
+    handler: src/authorizer.authorizer
+    environment:
+      Bartish: ${env:Bartish}
