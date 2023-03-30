@@ -1,0 +1,45 @@
+service: import-lambda
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: eu-west-1
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:ListBucket"
+          Resource:
+            - "arn:aws:s3:::uploaded-bucket-gwjf"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource:
+            - "arn:aws:s3:::uploaded-bucket-gwjf/*"
+
+functions:
+  importProductsFile:
+    handler: src/handlers/importProductsFile.importProductsFile
+    events:
+      - http:
+          path: /import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+          cors:
+            origin: '*'
+
+  importFileParser:
+    handler: src/handlers/importFileParser.importFileParser
+    events:
+      - s3:
+          bucket: uploaded-data-bucket
+          event: s3:ObjectCreated:*
+          rules: 
+            - prefix: uploaded/
+          existing: true
